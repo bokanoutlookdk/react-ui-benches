@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- file load -> privacy.file_unique_origin -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React Local</title>
+  <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+  <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script src='https://unpkg.com/react@16.13.1/umd/react.production.min.js'></script>
+  <script src='https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js'></script>
+  <script src='https://unpkg.com/react-router@5.0.0/umd/react-router.min.js'></script>
+  <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+  <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+  <style>
+    .search {
+      position: relative;
+    }
+
+    .search input {
+      text-indent: 20px;
+    }
+
+    .search .fa-search {
+      position: absolute;
+      top: 35px;
+      left: 25px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <main role="main" class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1 class="text-center">ROOT</h1>
+      </div>
+    </div>
+    <div id="root"></div>
+  </main>
+
+
+  <script type="text/babel">
+   class RequestService
+    {
+      static  makeRequest (method, url, callBack, authObj) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(e){
+          if (xhttp.readyState === 4 && xhttp.status === 200){
+            console.log("ok, response :", this.responseText);
+            callBack(this.responseText);
+          }
+        }
+        xhttp.open(method, url, true);
+        var sendObject = JSON.stringify({name: "admin", password: "Spurs4Ever"});
+        xhttp.send(sendObject);
+      }
+    }
+  
+  const List = () => {
+
+    RequestService.makeRequest("GET","/proxy?query=api/v1/hold/kategori/B88C1A4C-E87D-4AAE-B0DF-AB1700C2814D", 
+    (data) => { self.setState({ holdr: JSON.parse(data) });}, 
+    JSON.stringify({name: "admin", password: "Spurs4Ever"}));
+
+  const [listItems, setListItems] = React.useState(Array.from(Array(30).keys(), n => n + 1));
+  const [isfetching, setIsFetching] = React.useState(false);
+  
+  React.useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  React.useEffect(()=> {
+    if(!isfetching) return;
+    fetchMoreListItems();
+  }, [isfetching]);
+
+  function handleScroll() {
+    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+    console.log('Fetch more list items!');
+    setIsFetching(true);
+  }
+
+  function fetchMoreListItems() {
+  setTimeout(() => {
+    setListItems(prevState => ([...prevState, ...Array.from(Array(20).keys(), n => n + prevState.length + 1)]));
+    setIsFetching(false);
+  }, 2000);
+}
+
+  return (
+    <div>
+    hi..
+      <ul className="list-group mb-2">
+        {listItems.map(listItem => <li className="list-group-item">List Item {listItem}</li>)}
+      </ul>
+      {isfetching && 'Fetching more list items...'}
+    </div>
+  );
+};
+
+ReactDOM.render(<List />, document.getElementById('root'));
+  </script>
+
+</body>
+
+</html>

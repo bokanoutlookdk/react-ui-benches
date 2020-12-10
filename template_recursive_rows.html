@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- file load -> privacy.file_unique_origin -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React Local</title>
+    <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src='https://unpkg.com/react-router@5.0.0/umd/react-router.min.js'></script>
+    <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+    <style>
+        .search {
+            position: relative;
+        }
+
+        .search input {
+            text-indent: 20px;
+        }
+
+        .search .fa-search {
+            position: absolute;
+            top: 35px;
+            left: 25px;
+            font-size: 15px;
+        }
+
+        .my-overflow-hidden {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <main role="main" className="container-fluid">
+        <div className="row">
+            <div className="col-sm-12">
+                <h1 className="text-center">ROOT</h1>
+            </div>
+        </div>
+        <div className="container-fluid" id="root"></div>
+    </main>
+
+
+    <script type="text/babel">
+
+
+        const HomePageHeader = () => {
+            return (
+                <header className="header">
+                    <h2>Dynamicall grid rows table</h2>
+                </header>
+            );
+        };
+        const CompoundColumnContentButton = (props) => {
+            const [showResults, setShowResults] = React.useState(false)
+
+            return (
+                <div>
+                    <input type='button' value='Show Content' onClick={() => setShowResults(showResults => !showResults)} />
+                    { showResults ? <MyRows myRowData={props.data} /> : null}
+                </div>
+            )
+        }
+
+        const Field = (props) => {
+            if (!props.data)
+                return <td className="">empty</td>
+
+            if (typeof props.data === 'object') {
+                const data = [props.data];
+                return <td key={props.key} className='col'><CompoundColumnContentButton data={data} /></td>
+            }
+            else
+                return <td key={props.key} className='col'>{props.data}</td>
+
+        }
+
+        const MyRow = (props) => {
+            const data = props.data;
+            if (!data) return <tr />;
+
+            const ignoreValues = [];
+
+
+            for (const [key, value] of Object.entries(data)) {
+                if (props.ignoreCols.includes(key))
+                    ignoreValues.push(value);
+            }
+
+            return (
+                <tr key={props.key} >
+                    {Object.values(data).map((field, index) => !ignoreValues.includes(field) && <Field key={index} data={field} />)}
+                </tr>
+            );
+        };
+
+        const MyRows = (props) => {
+            if (props.myRowData !== undefined && props.myRowData.length > 0) {
+                const data = props.myRowData;
+
+
+                return (
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr>
+                                {data.slice(0, 1).map(headerRow => Object.keys(headerRow).map((propName, index) => !props.ignoreCols.includes(propName) && <th scope="col" key={index} >{propName}</th>))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((row, index) => <MyRow key={index} data={row} ignoreCols={props.ignoreCols} />)}
+                        </tbody>
+                    </table>
+
+                );
+
+            }
+            else
+                return (
+                    <div className="row">
+                        <div>empty..</div>
+                    </div>);
+        };
+
+        const App = (props) => {
+
+            const stockData = [
+                {
+                    company: "Twitter Inc",
+                    ticker: "TWTR",
+                    stockPrice: "22.76 USD",
+                    timeElapsed: "5 sec ago",
+                    address: { city: "bonn", postalcode: "999", established: { city: "LondonLondonLondonLondonLondonLondonLondonLondon", anno: "1800" } }
+                },
+                {
+                    company: "Twytter Inc",
+                    ticker: "TOTR",
+                    stockPrice: "999.0 USD",
+                    timeElapsed: "5 sec ago",
+                    address: { city: "London", postalcode: "8800" },
+                    established: { city: "London", anno: "1800" }
+                },
+            ];
+
+
+
+
+            console.log('vendors : ' + stockData.length);
+
+            const ignoreColsArr = ['company'];
+
+            return (
+                <div>
+                    <HomePageHeader />
+                    <div className="table-responsive">
+                        <MyRows myRowData={stockData} />
+                    </div>
+                </div>
+            );
+
+        }
+
+        ReactDOM.render(<App />, document.querySelector('#root'));
+    </script>
+
+</body>
+
+</html>

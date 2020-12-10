@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- file load -> privacy.file_unique_origin -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React Local</title>
+  <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+  <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script src='https://unpkg.com/react@16.13.1/umd/react.production.min.js'></script>
+  <script src='https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js'></script>
+  <script src='https://unpkg.com/react-router@5.0.0/umd/react-router.min.js'></script>
+  <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+  <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+  <style>
+    .search {
+      position: relative;
+    }
+
+    .search input {
+      text-indent: 20px;
+    }
+
+    .search .fa-search {
+      position: absolute;
+      top: 35px;
+      left: 25px;
+      font-size: 15px;
+    }
+
+    .header {
+      background-color: #f4e04d;
+      min-height: 10vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(10px + 2vmin);
+      color: #10375c;
+    }
+
+    table {
+      display: flex;
+      justify-content: center;
+      border: 1px solid gray;
+    }
+
+    td {
+      border: 1px solid gray;
+      width: 30em;
+    }
+  </style>
+</head>
+
+<body>
+  <main role="main" class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1 class="text-center">ROOT</h1>
+      </div>
+    </div>
+    <div id="root"></div>
+  </main>
+
+
+  <script type="text/babel">
+
+    const SelectList = (props) => {
+      debugger;
+      const classes = [
+        'Lorem' ,
+        'Ipsum',
+        'dolor',
+        'Sit',
+        'ames'
+      ]
+
+      let list = classes.map((item, index) => {
+        debugger;
+        return (
+          <option >{item}</option>
+        )
+      })
+
+
+      return (
+        <div className="filter-bar">
+          <form className="sort-form">
+            <div className="classSelect">
+              <span>select class</span>
+              <select name="classSelect" >
+                <option value="none" selected disabled hidden>
+                </option>
+                {list}
+              </select>
+            </div>
+          </form>
+        </div>
+      );
+
+    }
+
+
+    const Person = (props) => {
+      return (<div>{props.name}</div>);
+    }
+
+
+    const HomePageHeader = () => {
+      return (
+        <header className="header">
+          <h2>Your Stock Tracker</h2>
+        </header>
+      );
+    };
+
+    const Stock = ({ company, ticker, stockPrice, timeElapsed }) => {
+      if (!company) return <div />;
+      return (
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <h5>{company}</h5>
+              </td>
+              <td>
+                <h5>{ticker}</h5>
+              </td>
+              <td>
+                <h4>{stockPrice}</h4>
+              </td>
+              <td>
+                <p>{timeElapsed}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      );
+    };
+
+    const Stocks = (props) => {
+      return (
+        <div>
+          <HomePageHeader />
+          <div className="stock-container">
+            {props.stockData.map((data, key) => {
+              return (
+                <div key={key}>
+                  <Stock
+                    key={key}
+                    company={data.company}
+                    ticker={data.ticker}
+                    stockPrice={data.stockPrice}
+                    timeElapsed={data.timeElapsed}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    };
+
+    class CountClicks extends React.Component {
+      state = {
+        clicks: 0
+      }
+
+      onButtonClick = () => {
+        this.setState(prevState => ({
+          clicks: prevState.clicks + 1
+        }))
+      }
+
+      render() {
+        return (
+          <div>
+            <button onClick={this.onButtonClick}>
+              Click me
+        </button>
+            <span>
+              The button clicked
+          {this.state.clicks} times.
+        </span>
+          </div>
+        )
+      }
+    }
+
+    class ErrorBoundary extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+      }
+
+      componentDidCatch(error, info) {
+        // Display fallback UI
+        this.setState({ hasError: true });
+
+      }
+
+      render() {
+        if (this.state.hasError) {
+          // You can render any custom fallback UI
+          return <h1>Something went wrong.</h1>;
+        }
+        return this.props.children;
+      }
+    }
+
+    const FailingComponent = (props) => {
+      throw new Error('I crashed!');
+      return (<p> dummy element should not run</p>)
+
+    }
+
+
+    const MyAddressComponent = ({ addressFragment }) => {
+      const [address, setAddress] = React.useState([]);
+
+      React.useEffect(() => {
+        fetch(`https://dawa.aws.dk/adgangsadresser/autocomplete?q=${addressFragment}`)
+          .then(res => res.json())
+          .then(data => setAddress(data));
+      });
+
+      return (
+        <ul>
+          { address.map(addr => <li key={addr.id}>{addr.tekst}</li>)}
+        </ul>
+      );
+    };
+
+    class App extends React.Component {
+
+
+      render() {
+        const people = ['John', 'Bob', 'Fred'];
+
+
+        const stockData = [
+          {
+            company: "Twitter Inc",
+            ticker: "TWTR",
+            stockPrice: "22.76 USD",
+            timeElapsed: "5 sec ago",
+          },
+          {
+            company: "Square Inc",
+            ticker: "SQ",
+            stockPrice: "45.28 USD",
+            timeElapsed: "10 sec ago",
+          },
+          {
+            company: "Shopify Inc",
+            ticker: "SHOP",
+            stockPrice: "341.79 USD",
+            timeElapsed: "3 sec ago",
+          },
+          {
+            company: "Sunrun Inc",
+            ticker: "RUN",
+            stockPrice: "9.87 USD",
+            timeElapsed: "4 sec ago",
+          },
+          {
+            company: "Adobe Inc",
+            ticker: "ADBE",
+            stockPrice: "300.99 USD",
+            timeElapsed: "10 sec ago",
+          },
+          {
+            company: "HubSpot Inc",
+            ticker: "HUBS",
+            stockPrice: "115.22 USD",
+            timeElapsed: "12 sec ago",
+          },
+        ];
+
+        return (
+          <div>
+            <SelectList {...this.props} />
+            <hr />
+            {people.map(person => <Person name={person} />)}
+            <Stocks stockData={stockData} />
+            <hr />
+            <CountClicks />
+            <hr/>
+            <ErrorBoundary>
+              <FailingComponent />
+            </ErrorBoundary>
+            <hr/>
+            <MyAddressComponent addressFragment={'grønningen tåstrup'}/>
+          </div>
+        );
+      }
+    }
+
+    ReactDOM.render(<App />, document.querySelector('#root'));
+  </script>
+
+</body>
+
+</html>

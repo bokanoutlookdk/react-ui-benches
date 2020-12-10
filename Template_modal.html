@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- file load -> privacy.file_unique_origin -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React Local</title>
+    <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src='https://unpkg.com/react@16.13.1/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js'></script>
+    <script src='https://unpkg.com/react-router@5.0.0/umd/react-router.min.js'></script>
+    <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+    <style>
+        .search {
+            position: relative;
+        }
+
+        .search input {
+            text-indent: 20px;
+        }
+
+        .search .fa-search {
+            position: absolute;
+            top: 35px;
+            left: 25px;
+            font-size: 15px;
+        }
+
+        .modal-wrapper {
+            background: white;
+            border: 1px solid #d0cccc;
+            box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
+            margin: 100px auto 0;
+            transition: all .8s;
+            width: 60%;
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background: #e2e2e2;
+            height: 40px;
+            line-height: 40px;
+            padding: 5px 20px;
+            text-align: right;
+        }
+
+        .modal-header h2 {
+            float: left;
+            margin: 0;
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 10px 15px;
+            text-align: center;
+            height: 200px;
+        }
+
+        .modal-footer {
+            background: #e2e2e2;
+            height: 35px;
+            padding: 15px;
+        }
+
+        .close-modal-btn {
+            color: white;
+            cursor: pointer;
+            float: right;
+            font-size: 30px;
+            margin: 0;
+        }
+
+        .close-modal-btn:hover {
+            color: black;
+        }
+
+        .btn-cancel {
+            background-color: #b71c1c;
+            float: left;
+        }
+
+        .btn-continue {
+            background-color: #1b5e20;
+            float: right;
+        }
+
+        .back-shed {
+            background-color: rgba(48, 49, 48, 0.42);
+            height: 100%;
+            position: fixed;
+            transition: all 1.3s;
+            width: 100%;
+        }
+
+        .open-modal-btn {
+            margin: 15px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <main role="main" class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="text-center">ROOT</h1>
+            </div>
+        </div>
+        <div id="root"></div>
+    </main>
+
+    <!-- portal is outside root html node  -->
+    <script type="text/babel">
+
+
+        const Modal = (props) => {
+            return (
+                <div>
+                    <div className="modal-wrapper"
+                        style={{
+                            transform: props.show ? 'translateY(0vh)' : 'translateY(-100vh)',
+                            opacity: props.show ? '1' : '0'
+                        }}>
+                        <div className="modal-header">
+                            <h2>Modal Header</h2>
+                            <span className="close-modal-btn" onClick={props.close}>×</span>
+                        </div>
+                        <div className="modal-body">
+                            <p>
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+</p>
+                        </div>
+                        <div className="modal-footer">
+                            <p>This is Modal footer</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
+        class App extends React.Component {
+
+            constructor() {
+                super();
+
+                this.state = {
+                    isShowing: false
+                }
+            }
+
+            openModalHandler = () => {
+                this.setState({
+                    isShowing: true
+                });
+            }
+
+            closeModalHandler = () => {
+                this.setState({
+                    isShowing: false
+                });
+            }
+
+            render() {
+                return (
+                    <div>
+
+                        { this.state.isShowing ? <div onClick={this.closeModalHandler} className="back-shed"></div> : null}
+
+                        <button className="open-modal-btn" onClick={this.openModalHandler}>Open Modal</button>
+
+                        <Modal
+                            className="modal"
+                            show={this.state.isShowing}
+                            close={this.closeModalHandler}>
+                        </Modal>
+                    </div>
+                );
+            }
+        }
+
+
+        ReactDOM.render(<App />, document.querySelector('#root'));
+
+    </script>
+
+</body>
+
+</html>
